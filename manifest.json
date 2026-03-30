@@ -1,11 +1,11 @@
 {
   "name": "U-Sport 集點小幫手",
-  "short_name": "U運動",
-  "description": "靠近U-Sport合作場館自動提醒集點，含U-Walk萬步走追蹤",
+  "short_name": "U-Sport",
+  "description": "靠近U-Sport合作場館自動提醒集點，含U-Walk萬步走",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F4FBF8",
-  "theme_color": "#00C896",
+  "background_color": "#1C0A00",
+  "theme_color": "#FF6B35",
   "orientation": "portrait",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
@@ -14,14 +14,7 @@
   "categories": ["health", "lifestyle"],
   "lang": "zh-TW",
   "related_applications": [
-    {
-      "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=com.usport.app",
-      "id": "com.usport.app"
-    },
-    {
-      "platform": "itunes",
-      "url": "https://apps.apple.com/tw/app/u-sport%E8%87%BA%E5%8C%97%E6%A8%82%E9%81%8B%E5%8B%95/id6479229298"
-    }
+    { "platform": "play", "url": "https://play.google.com/store/apps/details?id=com.usport.app", "id": "com.usport.app" },
+    { "platform": "itunes", "url": "https://apps.apple.com/tw/app/u-sport%E8%87%BA%E5%8C%97%E6%A8%82%E9%81%8B%E5%8B%95/id6479229298" }
   ]
 }
