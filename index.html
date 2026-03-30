@@ -5,30 +5,42 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>U-Sport 集點小幫手</title>
   <link rel="manifest" href="manifest.json"/>
-  <meta name="theme-color" content="#00C896"/>
+  <meta name="theme-color" content="#FF6B35"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="U運動"/>
+  <meta name="apple-mobile-web-app-title" content="U-Sport"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Exo+2:wght@400;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --green:   #00C896;
-      --green2:  #00E5A8;
-      --green-d: #009970;
-      --green-g: rgba(0,200,150,0.15);
-      --green-glow: rgba(0,200,150,0.35);
-      --blue:    #3B82F6;
-      --orange:  #FF7A30;
-      --red:     #FF4F6A;
-      --bg:      #F4FBF8;
-      --bg2:     #FFFFFF;
-      --bg3:     #EAF6F0;
-      --ink:     #0D2B1E;
-      --ink2:    #3A5248;
-      --muted:   #8AADA0;
-      --border:  rgba(0,200,150,0.2);
-      --radius:  18px;
+      /* ── U-Sport 官方配色 ── */
+      --orange:     #FF6B35;
+      --orange2:    #FF8C5A;
+      --orange-d:   #E5501A;
+      --red:        #FF3B3B;
+      --gold:       #FFB020;
+      --gold-light: #FFD060;
+
+      /* 漸層 */
+      --grad-main:  linear-gradient(135deg, #FF6B35 0%, #FF3B3B 100%);
+      --grad-gold:  linear-gradient(135deg, #FFD060 0%, #FF9500 100%);
+      --grad-dark:  linear-gradient(160deg, #1C0A00 0%, #1A1A2E 100%);
+
+      /* 背景 */
+      --bg:         #F7F3F0;
+      --bg2:        #FFFFFF;
+      --bg3:        #FFF3EE;
+
+      /* 文字 */
+      --ink:        #1A0800;
+      --ink2:       #4A2810;
+      --muted:      #9A7060;
+
+      /* 透明度 */
+      --orange-g:   rgba(255,107,53,0.12);
+      --orange-glow:rgba(255,107,53,0.35);
+
+      --radius: 18px;
       --safe-top: env(safe-area-inset-top,0px);
       --safe-bot: env(safe-area-inset-bottom,0px);
     }
@@ -43,285 +55,333 @@
       overflow-x:hidden;
     }
 
-    /* ── Noise texture overlay */
-    body::before{
-      content:'';
-      position:fixed;inset:0;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events:none;z-index:0;
-    }
-
     .wrap{
       position:relative;z-index:1;
       min-height:100dvh;
       display:flex;flex-direction:column;
-      padding-top:calc(var(--safe-top) + 0px);
-      padding-bottom:calc(var(--safe-bot) + 100px);
+      padding-top:var(--safe-top);
+      padding-bottom:calc(var(--safe-bot) + 96px);
       max-width:480px;margin:0 auto;
     }
 
-    /* ── HEADER ── */
+    /* ══ HEADER ══ */
     header{
-      padding:20px 20px 0;
-      display:flex;align-items:center;justify-content:space-between;
+      background:var(--grad-dark);
+      padding:20px 20px 28px;
+      position:relative;overflow:hidden;
     }
+    header::after{
+      content:'';position:absolute;
+      right:-60px;top:-60px;
+      width:200px;height:200px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,107,53,.25) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    header::before{
+      content:'';position:absolute;
+      left:-30px;bottom:-30px;
+      width:140px;height:140px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,176,32,.12) 0%, transparent 70%);
+      pointer-events:none;
+    }
+
+    .header-top{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:20px;position:relative;z-index:1;
+    }
+
     .logo{display:flex;align-items:center;gap:10px;}
     .logo-mark{
-      width:42px;height:42px;border-radius:14px;
-      background:linear-gradient(135deg,var(--green2),var(--green-d));
+      width:44px;height:44px;border-radius:14px;
+      background:var(--grad-main);
       display:flex;align-items:center;justify-content:center;
-      box-shadow:0 4px 16px var(--green-glow);
+      box-shadow:0 4px 16px var(--orange-glow);
+      font-family:'Exo 2',sans-serif;font-weight:900;
+      font-size:20px;color:#fff;letter-spacing:-1px;
     }
-    .logo-mark svg{width:24px;height:24px;fill:white;}
-    .logo-text{
-      font-family:'Sora',sans-serif;font-weight:800;font-size:18px;
-      color:var(--ink);letter-spacing:-0.5px;line-height:1.1;
+    .logo-text{line-height:1.15;}
+    .logo-name{
+      font-family:'Exo 2',sans-serif;font-weight:800;
+      font-size:18px;color:#fff;letter-spacing:-.3px;
     }
-    .logo-text span{color:var(--green);display:block;font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-    .tracking-pill{
+    .logo-sub{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:2px;text-transform:uppercase;}
+
+    .pill{
       display:flex;align-items:center;gap:6px;
-      background:var(--bg2);border:1.5px solid var(--border);
-      border-radius:99px;padding:7px 14px;font-size:12px;font-weight:600;
-      color:var(--muted);box-shadow:0 2px 8px rgba(0,0,0,0.04);
+      background:rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.15);
+      border-radius:99px;padding:7px 14px;
+      font-size:12px;font-weight:600;color:rgba(255,255,255,.55);
+      backdrop-filter:blur(10px);
     }
-    .tracking-pill.on{border-color:var(--green);color:var(--green);}
-    .tdot{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:.3s;}
-    .tracking-pill.on .tdot{background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 1.8s infinite;}
+    .pill.on{background:rgba(255,107,53,.25);border-color:var(--orange);color:#FFB07A;}
+    .pdot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);transition:.3s;}
+    .pill.on .pdot{background:var(--gold);box-shadow:0 0 6px var(--gold);animation:blink 1.8s infinite;}
     @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
 
-    /* ── HERO CARD ── */
-    .hero{padding:20px;}
-    .hero-card{
-      background:linear-gradient(145deg,var(--ink) 0%,#1A4035 100%);
-      border-radius:28px;padding:28px;position:relative;overflow:hidden;
-      box-shadow:0 12px 40px rgba(0,200,150,0.2);
-    }
-    .hero-card::after{
-      content:'U';position:absolute;right:-10px;bottom:-30px;
-      font-family:'Sora',sans-serif;font-size:160px;font-weight:800;
-      color:rgba(0,200,150,0.07);line-height:1;pointer-events:none;
-    }
-    .hero-label{
+    /* Hero 區域（在 header 內） */
+    .hero-inner{position:relative;z-index:1;}
+    .hero-tag{
       display:inline-flex;align-items:center;gap:5px;
-      background:rgba(0,200,150,0.2);border:1px solid rgba(0,200,150,0.35);
-      color:var(--green2);border-radius:99px;padding:4px 12px;
-      font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-      margin-bottom:14px;
+      background:rgba(255,176,32,.2);border:1px solid rgba(255,176,32,.35);
+      color:var(--gold-light);border-radius:99px;
+      padding:4px 12px;font-size:11px;font-weight:700;
+      letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;
     }
     .hero-title{
-      font-family:'Sora',sans-serif;font-size:24px;font-weight:800;
-      color:#fff;line-height:1.3;margin-bottom:8px;letter-spacing:-0.5px;
+      font-family:'Exo 2',sans-serif;font-size:26px;font-weight:900;
+      color:#fff;line-height:1.25;margin-bottom:8px;letter-spacing:-.5px;
     }
-    .hero-title em{color:var(--green2);font-style:normal;}
-    .hero-sub{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:22px;}
+    .hero-title em{
+      font-style:normal;
+      background:var(--grad-gold);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .hero-desc{font-size:13px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:20px;}
 
     .btn-track{
-      width:100%;padding:15px;border:none;border-radius:14px;
+      width:100%;padding:16px;border:none;border-radius:var(--radius);
       font-family:'Noto Sans TC',sans-serif;font-size:15px;font-weight:700;
       cursor:pointer;transition:all .25s;letter-spacing:.5px;
-      background:linear-gradient(135deg,var(--green2),var(--green));
-      color:var(--ink);box-shadow:0 4px 20px var(--green-glow);
+      background:var(--grad-main);color:#fff;
+      box-shadow:0 6px 24px var(--orange-glow);
     }
     .btn-track:active{transform:scale(.97);}
     .btn-track.stop{
-      background:transparent;border:1.5px solid rgba(255,79,106,.5);
-      color:var(--red);box-shadow:none;
+      background:rgba(255,255,255,.1);
+      border:1.5px solid rgba(255,255,255,.25);
+      color:rgba(255,255,255,.7);box-shadow:none;
     }
 
-    /* ── TABS ── */
+    /* ══ TABS ══ */
     .tabs{
-      display:flex;gap:8px;padding:16px 20px 0;
+      display:flex;gap:6px;padding:16px 16px 0;
+      background:var(--bg);
     }
     .tab{
-      flex:1;padding:10px 0;border:none;border-radius:12px;
-      font-family:'Noto Sans TC',sans-serif;font-size:13px;font-weight:600;
-      cursor:pointer;transition:all .2s;background:var(--bg2);color:var(--muted);
+      flex:1;padding:10px 4px;border:none;border-radius:12px;
+      font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:700;
+      cursor:pointer;transition:all .2s;
+      background:var(--bg2);color:var(--muted);
       border:1.5px solid transparent;
+      box-shadow:0 1px 4px rgba(0,0,0,.06);
     }
-    .tab.active{background:var(--green-g);color:var(--green);border-color:var(--border);}
+    .tab.active{
+      background:var(--grad-main);color:#fff;
+      box-shadow:0 3px 12px var(--orange-glow);border-color:transparent;
+    }
 
-    /* ── TAB PANELS ── */
+    /* ══ PANELS ══ */
     .panel{display:none;animation:fadeUp .3s ease;}
     .panel.active{display:block;}
     @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
-    /* ── SECTION LABEL ── */
     .sec-label{
       font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
-      color:var(--muted);padding:20px 20px 10px;
+      color:var(--muted);padding:18px 16px 10px;
     }
 
-    /* ── MAP ── */
-    .map-wrap{margin:0 20px;border-radius:var(--radius);overflow:hidden;height:180px;position:relative;box-shadow:0 4px 20px rgba(0,0,0,0.08);}
+    /* ══ MAP ══ */
+    .map-wrap{
+      margin:0 16px;border-radius:var(--radius);overflow:hidden;
+      height:178px;position:relative;
+      box-shadow:0 4px 20px rgba(0,0,0,.1);
+    }
     #map-canvas{width:100%;height:100%;display:block;}
     .map-cover{
       position:absolute;inset:0;display:flex;flex-direction:column;
       align-items:center;justify-content:center;gap:8px;
-      background:rgba(244,251,248,.88);backdrop-filter:blur(6px);
+      background:rgba(247,243,240,.9);backdrop-filter:blur(6px);
     }
     .map-cover p{font-size:13px;color:var(--muted);font-weight:500;}
     .map-cover.hidden{display:none;}
 
-    /* ── STORE CARDS ── */
-    .stores{padding:0 20px;display:flex;flex-direction:column;gap:10px;}
+    /* ══ VENUE CARDS ══ */
+    .stores{padding:0 16px;display:flex;flex-direction:column;gap:8px;}
     .store{
-      background:var(--bg2);border:1.5px solid rgba(0,0,0,0.06);
+      background:var(--bg2);border:1.5px solid rgba(0,0,0,.06);
       border-radius:var(--radius);padding:14px 16px;
       display:flex;align-items:center;gap:12px;
-      box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:.2s;
+      box-shadow:0 2px 8px rgba(0,0,0,.04);transition:.2s;
     }
-    .store.near{border-color:var(--green);background:linear-gradient(135deg,rgba(0,200,150,.05),#fff);}
-    .store-ico{width:44px;height:44px;border-radius:12px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+    .store.near{
+      border-color:var(--orange);
+      background:linear-gradient(135deg,rgba(255,107,53,.06),#fff);
+    }
+    .store-ico{
+      width:46px;height:46px;border-radius:12px;
+      background:var(--bg3);display:flex;
+      align-items:center;justify-content:center;
+      font-size:22px;flex-shrink:0;
+    }
+    .store.near .store-ico{background:rgba(255,107,53,.1);}
     .store-info{flex:1;min-width:0;}
     .store-name{font-weight:700;font-size:14px;margin-bottom:2px;}
     .store-addr{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .near-badge{display:inline-flex;align-items:center;gap:3px;background:var(--green-g);color:var(--green);font-size:10px;font-weight:700;border-radius:6px;padding:2px 7px;margin-top:4px;}
-    .store-dist{font-size:12px;font-weight:700;color:var(--green);flex-shrink:0;}
+    .near-badge{
+      display:inline-flex;align-items:center;gap:3px;
+      background:rgba(255,107,53,.12);color:var(--orange-d);
+      font-size:10px;font-weight:700;border-radius:6px;
+      padding:2px 7px;margin-top:4px;
+    }
+    .store-dist{font-size:12px;font-weight:700;color:var(--orange);flex-shrink:0;}
     .store-dist.far{color:var(--muted);}
 
-    /* ── U-WALK PANEL ── */
-    .walk-hero{
-      margin:0 20px;
-      background:linear-gradient(135deg,#EEF9FF,#E0F4FF);
-      border:1.5px solid rgba(59,130,246,.2);
-      border-radius:24px;padding:24px;position:relative;overflow:hidden;
+    /* ══ U-WALK PANEL ══ */
+    .walk-card{
+      margin:0 16px;
+      background:var(--grad-dark);
+      border-radius:24px;padding:24px;
+      position:relative;overflow:hidden;
     }
-    .walk-hero::after{
-      content:'🚶';position:absolute;right:16px;bottom:8px;
-      font-size:80px;opacity:.12;pointer-events:none;
+    .walk-card::after{
+      content:'🚶';position:absolute;right:12px;bottom:8px;
+      font-size:90px;opacity:.1;pointer-events:none;
     }
-    .walk-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:var(--blue);margin-bottom:4px;}
-    .walk-sub{font-size:12px;color:#5A8FAF;line-height:1.6;margin-bottom:18px;}
+    .walk-card-title{
+      font-family:'Exo 2',sans-serif;font-size:18px;font-weight:800;
+      color:#fff;margin-bottom:4px;
+    }
+    .walk-card-sub{font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:20px;}
 
-    .step-ring-wrap{display:flex;justify-content:center;margin-bottom:18px;position:relative;}
+    .step-ring-wrap{display:flex;justify-content:center;margin-bottom:20px;}
     .step-ring{position:relative;width:140px;height:140px;}
     .step-ring svg{width:100%;height:100%;transform:rotate(-90deg);}
-    .ring-bg{fill:none;stroke:#D1E8F5;stroke-width:10;}
-    .ring-prog{fill:none;stroke:var(--blue);stroke-width:10;stroke-linecap:round;stroke-dasharray:358;stroke-dashoffset:358;transition:stroke-dashoffset 1s ease;}
+    .ring-bg{fill:none;stroke:rgba(255,255,255,.1);stroke-width:10;}
+    .ring-prog{
+      fill:none;stroke:url(#ringGrad);stroke-width:10;
+      stroke-linecap:round;stroke-dasharray:358;
+      stroke-dashoffset:358;transition:stroke-dashoffset 1s ease;
+    }
     .ring-center{
       position:absolute;inset:0;display:flex;flex-direction:column;
       align-items:center;justify-content:center;
     }
-    .step-num{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;color:var(--blue);line-height:1;}
-    .step-label{font-size:10px;color:#5A8FAF;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
-
-    .walk-targets{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-    .walk-target{
-      background:rgba(59,130,246,.08);border-radius:14px;padding:14px;
-      border:1.5px solid rgba(59,130,246,.15);
-      display:flex;flex-direction:column;gap:4px;
+    .step-num{
+      font-family:'Exo 2',sans-serif;font-size:26px;font-weight:900;
+      color:#fff;line-height:1;
     }
-    .wt-steps{font-family:'Sora',sans-serif;font-size:16px;font-weight:800;color:var(--blue);}
-    .wt-reward{font-size:11px;font-weight:700;color:var(--green);}
-    .wt-label{font-size:11px;color:#5A8FAF;}
-    .wt-bar{height:4px;border-radius:99px;background:rgba(59,130,246,.15);overflow:hidden;margin-top:6px;}
-    .wt-bar-fill{height:100%;border-radius:99px;background:var(--blue);transition:width 1s ease;}
+    .step-label{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+    .walk-goals{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .goal{
+      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+      border-radius:14px;padding:14px;
+    }
+    .goal-steps{font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800;color:#fff;}
+    .goal-reward{font-size:11px;font-weight:700;color:var(--gold-light);}
+    .goal-label{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;}
+    .goal-bar{height:4px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:8px;overflow:hidden;}
+    .goal-fill{height:100%;border-radius:99px;background:var(--grad-gold);transition:width 1s ease;}
 
     .walk-note{
-      margin:12px 0 0;font-size:11px;color:#5A8FAF;
-      background:rgba(59,130,246,.06);border-radius:10px;padding:10px 12px;
-      line-height:1.6;
+      margin-top:14px;font-size:11px;color:rgba(255,255,255,.4);
+      background:rgba(255,255,255,.05);border-radius:10px;
+      padding:10px 12px;line-height:1.7;
     }
+    .walk-note strong{color:var(--gold-light);}
 
-    .btn-walk{
-      margin-top:16px;width:100%;padding:14px;border:none;border-radius:12px;
+    .btn-sim{
+      margin-top:16px;width:100%;padding:13px;border:none;border-radius:12px;
       font-family:'Noto Sans TC',sans-serif;font-size:14px;font-weight:700;
-      background:linear-gradient(135deg,#60B3FF,var(--blue));color:#fff;
-      cursor:pointer;box-shadow:0 4px 16px rgba(59,130,246,.3);
-      transition:all .2s;
+      background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);
+      border:1px solid rgba(255,255,255,.15);
+      cursor:pointer;transition:.2s;
     }
-    .btn-walk:active{transform:scale(.97);}
+    .btn-sim:active{transform:scale(.97);}
 
-    /* ── LOG ── */
-    .logs{padding:0 20px;display:flex;flex-direction:column;gap:8px;}
+    /* ══ LOG ══ */
+    .logs{padding:0 16px;display:flex;flex-direction:column;gap:8px;}
     .log{
-      background:var(--bg2);border-left:3px solid var(--green);
-      border-radius:0 12px 12px 0;padding:12px 14px;
+      background:var(--bg2);
+      border-left:3px solid var(--orange);
+      border-radius:0 var(--radius) var(--radius) 0;
+      padding:12px 14px;
       display:flex;justify-content:space-between;align-items:flex-start;
-      box-shadow:0 2px 6px rgba(0,0,0,0.04);
+      box-shadow:0 2px 6px rgba(0,0,0,.04);
     }
     .log-body{font-size:13px;color:var(--ink2);}
     .log-body strong{color:var(--ink);font-weight:700;}
-    .log-time{font-size:11px;color:var(--muted);flex-shrink:0;margin-left:8px;padding-top:1px;}
-    .log-empty{text-align:center;padding:30px 20px;color:var(--muted);font-size:14px;}
+    .log-time{font-size:11px;color:var(--muted);flex-shrink:0;margin-left:8px;}
+    .log-empty{text-align:center;padding:36px 16px;color:var(--muted);font-size:14px;line-height:1.8;}
 
-    /* ── OPEN APP BAR ── */
+    /* ══ APP BAR ══ */
     .appbar{
       position:fixed;bottom:0;left:0;right:0;
-      padding:10px 20px calc(10px + var(--safe-bot));
-      background:linear-gradient(to top,var(--bg) 75%,transparent);
+      padding:10px 16px calc(10px + var(--safe-bot));
+      background:linear-gradient(to top,var(--bg) 70%,transparent);
       z-index:100;max-width:480px;margin:0 auto;
     }
-    .appbar-inner{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .appbar-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
     .app-btn{
       display:flex;align-items:center;justify-content:center;gap:7px;
-      padding:14px 10px;border-radius:14px;font-family:'Noto Sans TC',sans-serif;
-      font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;
-      transition:.2s;border:none;
+      padding:14px 10px;border-radius:14px;
+      font-family:'Noto Sans TC',sans-serif;font-size:13px;font-weight:700;
+      cursor:pointer;text-decoration:none;transition:.2s;border:none;
     }
     .app-btn:active{transform:scale(.97);}
-    .app-btn-ios{
-      background:var(--ink);color:#fff;
-      box-shadow:0 4px 16px rgba(0,0,0,0.18);
+    .app-ios{
+      background:#000;color:#fff;
+      box-shadow:0 4px 16px rgba(0,0,0,.2);
     }
-    .app-btn-android{
-      background:linear-gradient(135deg,var(--green2),var(--green));
-      color:var(--ink);box-shadow:0 4px 16px var(--green-glow);
+    .app-android{
+      background:var(--grad-main);color:#fff;
+      box-shadow:0 4px 16px var(--orange-glow);
     }
 
-    /* ── TOAST ── */
+    /* ══ TOAST ══ */
     #toast{
       position:fixed;top:calc(var(--safe-top) + 12px);left:50%;
-      transform:translateX(-50%) translateY(-100px);
+      transform:translateX(-50%) translateY(-120px);
       background:var(--ink);color:#fff;border-radius:14px;
       padding:12px 18px;display:flex;align-items:center;gap:8px;
       z-index:999;transition:transform .4s cubic-bezier(.34,1.56,.64,1);
-      white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.25);font-size:13px;font-weight:600;
+      white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.3);
+      font-size:13px;font-weight:600;
     }
     #toast.show{transform:translateX(-50%) translateY(0);}
   </style>
 </head>
 <body>
 
-<div id="toast"><span id="t-icon">✅</span><span id="t-msg">已啟用通知</span></div>
+<div id="toast"><span id="t-icon">✅</span><span id="t-msg">通知已啟用</span></div>
 
 <div class="wrap">
 
-  <!-- HEADER -->
+  <!-- ══ HEADER + HERO ══ -->
   <header>
-    <div class="logo">
-      <div class="logo-mark">
-        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <div class="header-top">
+      <div class="logo">
+        <div class="logo-mark">U</div>
+        <div class="logo-text">
+          <div class="logo-name">U-Sport</div>
+          <div class="logo-sub">臺北樂運動 · 2026</div>
+        </div>
       </div>
-      <div class="logo-text">
-        U-Sport 小幫手
-        <span>臺北樂運動 · 2026</span>
+      <div class="pill" id="pill">
+        <div class="pdot"></div>
+        <span id="pill-label">未追蹤</span>
       </div>
     </div>
-    <div class="tracking-pill" id="pill">
-      <div class="tdot"></div>
-      <span id="pill-label">未追蹤</span>
+
+    <div class="hero-inner">
+      <div class="hero-tag">📍 智慧定位提醒</div>
+      <h1 class="hero-title">靠近場館<br/><em>自動通知集點</em></h1>
+      <p class="hero-desc">涵蓋台北 240+ 合作場館，含運動中心、World Gym、健身工廠，500m 內即提醒</p>
+      <button class="btn-track" id="btn-track" onclick="toggleTracking()">🏃 開始追蹤定位</button>
     </div>
   </header>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-card">
-      <div class="hero-label">📍 智慧定位提醒</div>
-      <h1 class="hero-title">靠近場館<br/><em>自動通知集點</em></h1>
-      <p class="hero-sub">涵蓋台北 240+ 合作場館，含運動中心、World Gym、健身工廠，靠近 500m 即提醒</p>
-      <button class="btn-track" id="btn-track" onclick="toggleTracking()">🏃 開始追蹤定位</button>
-    </div>
-  </div>
-
-  <!-- TABS -->
+  <!-- ══ TABS ══ -->
   <div class="tabs">
     <button class="tab active" onclick="switchTab('venues',this)">🏟️ 場館雷達</button>
     <button class="tab" onclick="switchTab('walk',this)">🚶 萬步走</button>
-    <button class="tab" onclick="switchTab('log',this)">🔔 紀錄</button>
+    <button class="tab" onclick="switchTab('log',this)">🔔 通知紀錄</button>
   </div>
 
-  <!-- PANEL: VENUES -->
+  <!-- ══ PANEL: VENUES ══ -->
   <div class="panel active" id="panel-venues">
     <div class="sec-label">📡 附近場館地圖</div>
     <div class="map-wrap">
@@ -334,14 +394,25 @@
 
     <div class="sec-label">🏪 合作場館列表</div>
     <div class="stores" id="stores"></div>
+    <div style="height:8px"></div>
   </div>
 
-  <!-- PANEL: U-WALK -->
+  <!-- ══ PANEL: U-WALK ══ -->
   <div class="panel" id="panel-walk">
-    <div style="padding:16px 0 0;"></div>
-    <div class="walk-hero">
-      <div class="walk-title">U-Walk 健康萬步走</div>
-      <div class="walk-sub">每月步行達標即可獲得 U 幣獎勵<br/>活動期間：115 年 1 月 1 日 ～ 6 月 30 日</div>
+    <div style="padding:14px 0 0"></div>
+    <div class="walk-card">
+      <!-- SVG 漸層定義 -->
+      <svg width="0" height="0" style="position:absolute">
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFD060"/>
+            <stop offset="100%" stop-color="#FF6B35"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div class="walk-card-title">U-Walk 健康萬步走</div>
+      <div class="walk-card-sub">115年 1月1日 ～ 6月30日 · 每月步行達標得 U 幣</div>
 
       <div class="step-ring-wrap">
         <div class="step-ring">
@@ -356,101 +427,93 @@
         </div>
       </div>
 
-      <div class="walk-targets">
-        <div class="walk-target">
-          <div class="wt-steps">20 萬步</div>
-          <div class="wt-reward">＋ 30 U 幣</div>
-          <div class="wt-label">每月目標一</div>
-          <div class="wt-bar"><div class="wt-bar-fill" id="bar1" style="width:0%"></div></div>
+      <div class="walk-goals">
+        <div class="goal">
+          <div class="goal-steps">20 萬步</div>
+          <div class="goal-reward">＋ 30 U 幣</div>
+          <div class="goal-label">每月目標一</div>
+          <div class="goal-bar"><div class="goal-fill" id="bar1" style="width:0%"></div></div>
         </div>
-        <div class="walk-target">
-          <div class="wt-steps">30 萬步</div>
-          <div class="wt-reward">＋ 120 U 幣</div>
-          <div class="wt-label">每月目標二</div>
-          <div class="wt-bar"><div class="wt-bar-fill" id="bar2" style="width:0%"></div></div>
+        <div class="goal">
+          <div class="goal-steps">30 萬步</div>
+          <div class="goal-reward">＋ 120 U 幣</div>
+          <div class="goal-label">每月目標二</div>
+          <div class="goal-bar"><div class="goal-fill" id="bar2" style="width:0%"></div></div>
         </div>
       </div>
 
       <div class="walk-note">
-        📱 U-Walk 需在 U-Sport App 內授權手機計步器後才會計算。本頁步數為示意展示，實際數據請以 App 為準。<br/>
-        ⏱ 一個月走滿 <strong>20萬步得30U</strong>、達 <strong>30萬步得120U</strong>（以自然月計算）。
+        📱 實際步數由 U-Sport App 連接手機計步器計算，本頁為示意展示。<br/>
+        🏆 <strong>20萬步→30U</strong>、<strong>30萬步→120U</strong>，以自然月計算。
       </div>
 
-      <button class="btn-walk" onclick="simulateSteps()">🎮 模擬步數增加（示範）</button>
+      <button class="btn-sim" onclick="simulateSteps()">🎮 模擬步數增加（示範用）</button>
     </div>
+    <div style="height:8px"></div>
   </div>
 
-  <!-- PANEL: LOG -->
+  <!-- ══ PANEL: LOG ══ -->
   <div class="panel" id="panel-log">
     <div class="sec-label">🔔 通知紀錄</div>
     <div class="logs" id="logs">
-      <div class="log-empty">還沒有紀錄<br/>開始追蹤後靠近場館即會出現</div>
+      <div class="log-empty">還沒有紀錄<br/>開始追蹤並靠近場館後會出現在這裡</div>
     </div>
   </div>
 
-  <div style="height:16px"></div>
 </div>
 
-<!-- APP BAR -->
+<!-- ══ APP BAR ══ -->
 <div class="appbar">
-  <div class="appbar-inner">
-    <a class="app-btn app-btn-ios" href="https://apps.apple.com/tw/app/u-sport%E8%87%BA%E5%8C%97%E6%A8%82%E9%81%8B%E5%8B%95/id6479229298" target="_blank" rel="noopener">
-      <span style="font-size:16px"></span> App Store
+  <div class="appbar-grid">
+    <a class="app-btn app-ios"
+       href="https://apps.apple.com/tw/app/u-sport%E8%87%BA%E5%8C%97%E6%A8%82%E9%81%8B%E5%8B%95/id6479229298"
+       target="_blank" rel="noopener">
+       <span style="font-size:16px"></span> App Store
     </a>
-    <a class="app-btn app-btn-android" href="https://play.google.com/store/apps/details?id=com.usport.app" target="_blank" rel="noopener">
-      <span style="font-size:16px">▶</span> Google Play
+    <a class="app-btn app-android"
+       href="https://play.google.com/store/apps/details?id=com.usport.app"
+       target="_blank" rel="noopener">
+       <span style="font-size:16px">▶</span> Google Play
     </a>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════
-// U-Sport 集點小幫手 · 2026
-// ══════════════════════════════════════════
+// ══════════════════════════════════════════════
+// U-Sport 集點小幫手 · 主程式 · 2026
+// ══════════════════════════════════════════════
 
-// ── 台北 U-Sport 合作場館（代表性場館）
 const VENUES = [
-  { id:1,  name:'台北市立大安運動中心', addr:'大安區建國南路二段', emoji:'🏋️', lat:25.0225, lng:121.5389, r:500 },
-  { id:2,  name:'台北市立中山運動中心', addr:'中山區朱崙街', emoji:'🏊', lat:25.0614, lng:121.5328, r:500 },
-  { id:3,  name:'World Gym 信義旗艦店', addr:'信義區松仁路', emoji:'💪', lat:25.0368, lng:121.5670, r:500 },
-  { id:4,  name:'健身工廠 南京東路店', addr:'松山區南京東路四段', emoji:'🔥', lat:25.0516, lng:121.5561, r:500 },
-  { id:5,  name:'台北市立松山運動中心', addr:'松山區健康路', emoji:'🏸', lat:25.0570, lng:121.5714, r:500 },
-  { id:6,  name:'台北市立內湖運動中心', addr:'內湖區內湖路一段', emoji:'🎾', lat:25.0828, lng:121.5874, r:500 },
-  { id:7,  name:'台北市立士林運動中心', addr:'士林區基河路', emoji:'🏃', lat:25.0932, lng:121.5200, r:500 },
-  { id:8,  name:'World Gym 中山北路店', addr:'中山區中山北路二段', emoji:'💪', lat:25.0588, lng:121.5234, r:500 },
+  { id:1,  name:'大安運動中心',     addr:'大安區建國南路二段', emoji:'🏋️', lat:25.0225, lng:121.5389, r:500 },
+  { id:2,  name:'中山運動中心',     addr:'中山區朱崙街',       emoji:'🏊', lat:25.0614, lng:121.5328, r:500 },
+  { id:3,  name:'World Gym 信義店', addr:'信義區松仁路',       emoji:'💪', lat:25.0368, lng:121.5670, r:500 },
+  { id:4,  name:'健身工廠 南京店',  addr:'松山區南京東路四段', emoji:'🔥', lat:25.0516, lng:121.5561, r:500 },
+  { id:5,  name:'松山運動中心',     addr:'松山區健康路',       emoji:'🏸', lat:25.0570, lng:121.5714, r:500 },
+  { id:6,  name:'內湖運動中心',     addr:'內湖區內湖路一段',   emoji:'🎾', lat:25.0828, lng:121.5874, r:500 },
+  { id:7,  name:'士林運動中心',     addr:'士林區基河路',       emoji:'🏃', lat:25.0932, lng:121.5200, r:500 },
+  { id:8,  name:'World Gym 中山店', addr:'中山區中山北路二段', emoji:'💪', lat:25.0588, lng:121.5234, r:500 },
 ];
 
-let isTracking = false;
-let watchId    = null;
-let userPos    = null;
-let notified   = new Set();
-let logs       = [];
-let mapCtx     = null;
-let mapEl      = null;
-let mapRAF     = null;
+let isTracking = false, watchId = null, userPos = null;
+let notified = new Set(), logs = [], mapRAF = null;
+let mapEl = null, mapCtx = null;
+let simSteps = parseInt(localStorage.getItem('usport_steps') || '0');
 
-// U-Walk 模擬
-let simSteps   = 0;
-const MONTHLY_STEPS = 200000;
-
-// ── 初始化
 window.addEventListener('DOMContentLoaded', () => {
   registerSW();
   renderVenues(null);
   initMap();
-  updateWalk(0);
-  // 嘗試讀取 Health/Pedometer（示意；實際步數由 U-Sport App 計算）
-  tryPedometer();
+  updateWalk(simSteps);
 });
 
-// ── SW 註冊
+// ── Service Worker
 async function registerSW() {
   if ('serviceWorker' in navigator) {
     try { await navigator.serviceWorker.register('sw.js'); } catch(e) {}
   }
 }
 
-// ── Tab 切換
+// ── Tab
 function switchTab(name, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -458,27 +521,20 @@ function switchTab(name, el) {
   document.getElementById('panel-' + name).classList.add('active');
 }
 
-// ── 追蹤開關
+// ── 追蹤切換
 async function toggleTracking() {
-  if (!isTracking) { await startTracking(); }
-  else { stopTracking(); }
+  isTracking ? stopTracking() : await startTracking();
 }
 
 async function startTracking() {
   const np = await Notification.requestPermission();
-  if (np !== 'granted') {
-    showToast('⚠️', '請允許通知權限');
-    return;
-  }
-  if (!('geolocation' in navigator)) {
-    showToast('❌', '此裝置不支援定位');
-    return;
-  }
+  if (np !== 'granted') { showToast('⚠️', '請允許通知權限'); return; }
+  if (!('geolocation' in navigator)) { showToast('❌', '不支援定位'); return; }
   showToast('📍', '取得定位中...');
   navigator.geolocation.getCurrentPosition(
     pos => { userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude }; activate(); },
-    ()  => { userPos = { lat: 25.0408, lng: 121.5654 }; showToast('🗺️', '使用示範位置（台北信義）'); activate(); },
-    { enableHighAccuracy:true, timeout:8000 }
+    ()  => { userPos = { lat: 25.0408, lng: 121.5654 }; showToast('🗺️', '示範位置（台北信義）'); activate(); },
+    { enableHighAccuracy: true, timeout: 8000 }
   );
 }
 
@@ -488,9 +544,9 @@ function activate() {
   startMapLoop();
   checkVenues();
   watchId = navigator.geolocation.watchPosition(
-    pos => { userPos = { lat:pos.coords.latitude, lng:pos.coords.longitude }; checkVenues(); },
+    pos => { userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude }; checkVenues(); },
     () => {},
-    { enableHighAccuracy:true, maximumAge:15000, timeout:10000 }
+    { enableHighAccuracy: true, maximumAge: 15000, timeout: 10000 }
   );
   setInterval(checkVenues, 30000);
 }
@@ -498,8 +554,8 @@ function activate() {
 function stopTracking() {
   isTracking = false;
   if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
-  notified.clear();
   if (mapRAF) { cancelAnimationFrame(mapRAF); mapRAF = null; }
+  notified.clear();
   updateUI();
   renderVenues(null);
   document.getElementById('map-cover').classList.remove('hidden');
@@ -507,127 +563,113 @@ function stopTracking() {
 }
 
 function updateUI() {
-  const btn  = document.getElementById('btn-track');
+  const btn = document.getElementById('btn-track');
   const pill = document.getElementById('pill');
-  const lbl  = document.getElementById('pill-label');
+  const lbl = document.getElementById('pill-label');
   if (isTracking) {
     btn.textContent = '⏹ 停止追蹤';
     btn.classList.add('stop');
-    pill.classList.add('on');
-    lbl.textContent = '追蹤中';
+    pill.classList.add('on'); lbl.textContent = '追蹤中';
     document.getElementById('map-cover').classList.add('hidden');
   } else {
     btn.textContent = '🏃 開始追蹤定位';
     btn.classList.remove('stop');
-    pill.classList.remove('on');
-    lbl.textContent = '未追蹤';
+    pill.classList.remove('on'); lbl.textContent = '未追蹤';
   }
 }
 
-// ── 距離計算
+// ── 距離（Haversine）
 function dist(a, b) {
-  const R = 6371000, dL = (b.lat-a.lat)*Math.PI/180, dG = (b.lng-a.lng)*Math.PI/180;
+  const R = 6371000;
+  const dL = (b.lat - a.lat) * Math.PI / 180;
+  const dG = (b.lng - a.lng) * Math.PI / 180;
   const x = Math.sin(dL/2)**2 + Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dG/2)**2;
   return Math.round(R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x)));
 }
 
-// ── 檢查附近場館
+// ── 檢查場館
 function checkVenues() {
   if (!userPos) return;
-  const list = VENUES.map(v => ({...v, d: dist(userPos, {lat:v.lat, lng:v.lng})})).sort((a,b)=>a.d-b.d);
+  const list = VENUES.map(v => ({ ...v, d: dist(userPos, { lat: v.lat, lng: v.lng }) }))
+                     .sort((a, b) => a.d - b.d);
   renderVenues(list);
   list.forEach(v => {
     if (v.d <= v.r && !notified.has(v.id)) {
       notified.add(v.id);
-      pushNotify(v);
+      sendNotify(v);
       addLog(v);
     }
   });
 }
 
-// ── 通知
-function pushNotify(v) {
+function sendNotify(v) {
   if (Notification.permission !== 'granted') return;
   const n = new Notification(`🏃 U-Sport 集點提醒 — ${v.name}`, {
-    body: `你距離「${v.name}」只有 ${v.d}m！打開 U-Sport App 出示 QR Code 入場，每次集 5 U 幣 🎉`,
+    body: `你距離「${v.name}」只有 ${v.d}m！打開 U-Sport App 出示 QR Code，入場即得 5 U 幣 🎉`,
     tag: `v-${v.id}`,
-    silent: false,
   });
   n.onclick = () => { window.open('https://usport.gov.taipei', '_blank'); n.close(); };
-  showToast('🪙', `靠近 ${v.name}，快集點！`);
+  showToast('🪙', `靠近 ${v.name}！快去集點`);
 }
 
-// ── 加紀錄
 function addLog(v) {
   const t = new Date();
-  logs.unshift({ name:v.name, emoji:v.emoji, d:v.d, time:`${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}` });
+  const time = `${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}`;
+  logs.unshift({ name: v.name, emoji: v.emoji, d: v.d, time });
   renderLogs();
 }
 
 function renderLogs() {
   const el = document.getElementById('logs');
-  if (!logs.length) { el.innerHTML = '<div class="log-empty">還沒有紀錄<br/>開始追蹤後靠近場館即會出現</div>'; return; }
-  el.innerHTML = logs.slice(0,8).map(l=>`
+  if (!logs.length) {
+    el.innerHTML = '<div class="log-empty">還沒有紀錄<br/>開始追蹤並靠近場館後會出現在這裡</div>';
+    return;
+  }
+  el.innerHTML = logs.slice(0, 8).map(l => `
     <div class="log">
       <div class="log-body">${l.emoji} <strong>${l.name}</strong>，距離 ${l.d}m，提醒集點</div>
       <div class="log-time">${l.time}</div>
     </div>`).join('');
 }
 
-// ── 渲染場館列表
 function renderVenues(list) {
   const el = document.getElementById('stores');
-  const src = list || VENUES.map(v => ({...v, d:null}));
-  el.innerHTML = src.slice(0,6).map(v => {
+  const src = list || VENUES.map(v => ({ ...v, d: null }));
+  el.innerHTML = src.slice(0, 6).map(v => {
     const near = v.d !== null && v.d <= v.r;
+    const distTxt = v.d === null ? '---' : v.d >= 1000 ? (v.d/1000).toFixed(1)+'km' : v.d+'m';
     return `
-    <div class="store ${near?'near':''}">
+    <div class="store ${near ? 'near' : ''}">
       <div class="store-ico">${v.emoji}</div>
       <div class="store-info">
         <div class="store-name">${v.name}</div>
         <div class="store-addr">${v.addr}</div>
-        ${near?'<div class="near-badge">📍 附近！記得集點</div>':''}
+        ${near ? '<div class="near-badge">📍 附近！記得集點</div>' : ''}
       </div>
-      <div class="store-dist ${!v.d||v.d>1000?'far':''}">
-        ${v.d===null?'---': v.d>=1000?(v.d/1000).toFixed(1)+'km': v.d+'m'}
-      </div>
+      <div class="store-dist ${!v.d || v.d > 1000 ? 'far' : ''}">${distTxt}</div>
     </div>`;
   }).join('');
 }
 
 // ── U-Walk
-function tryPedometer() {
-  // 在真實環境中此處可嘗試 DeviceMotionEvent / Health API
-  // 這裡展示模擬數值
-  const saved = parseInt(localStorage.getItem('uwalk_steps')||'0');
-  simSteps = saved;
-  updateWalk(simSteps);
-}
-
 function simulateSteps() {
-  simSteps += Math.floor(Math.random()*3000)+1000;
+  simSteps += Math.floor(Math.random() * 3000) + 1000;
   if (simSteps > 300000) simSteps = 300000;
-  localStorage.setItem('uwalk_steps', simSteps);
+  localStorage.setItem('usport_steps', simSteps);
   updateWalk(simSteps);
   showToast('🚶', `模擬步數：${simSteps.toLocaleString()} 步`);
 }
 
 function updateWalk(steps) {
   document.getElementById('step-num').textContent = steps.toLocaleString();
-
-  // 環形進度（30萬步為滿）
-  const pct = Math.min(steps / 300000, 1);
   const circ = 2 * Math.PI * 57;
+  const pct = Math.min(steps / 300000, 1);
   document.getElementById('ring-prog').style.strokeDashoffset = circ * (1 - pct);
-
-  // 進度條
-  const p1 = Math.min(steps / 200000 * 100, 100);
-  const p2 = Math.min(steps / 300000 * 100, 100);
-  document.getElementById('bar1').style.width = p1 + '%';
-  document.getElementById('bar2').style.width = p2 + '%';
+  document.getElementById('bar1').style.width = Math.min(steps / 200000 * 100, 100) + '%';
+  document.getElementById('bar2').style.width = Math.min(steps / 300000 * 100, 100) + '%';
 }
 
-// ── 地圖 Canvas
+// ── Canvas 地圖
 function initMap() {
   mapEl  = document.getElementById('map-canvas');
   mapCtx = mapEl.getContext('2d');
@@ -637,10 +679,7 @@ function initMap() {
 }
 
 function startMapLoop() {
-  function loop() {
-    drawMap();
-    mapRAF = requestAnimationFrame(loop);
-  }
+  function loop() { drawMap(); mapRAF = requestAnimationFrame(loop); }
   loop();
 }
 
@@ -649,49 +688,56 @@ function drawMap() {
   const W = mapEl.width, H = mapEl.height, ctx = mapCtx;
   ctx.clearRect(0, 0, W, H);
 
-  // BG
-  ctx.fillStyle = '#EAF6F0'; ctx.fillRect(0,0,W,H);
+  // 背景
+  const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+  bgGrad.addColorStop(0, '#1C0A00'); bgGrad.addColorStop(1, '#1A1A2E');
+  ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, W, H);
 
-  // Grid
-  ctx.strokeStyle = 'rgba(0,150,100,0.07)'; ctx.lineWidth = 1;
+  // 格線
+  ctx.strokeStyle = 'rgba(255,107,53,0.06)'; ctx.lineWidth = 1;
   for (let x=0;x<W;x+=36){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for (let y=0;y<H;y+=36){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
 
-  const latR=0.035, lngR=0.055;
-  const minLat=userPos.lat-latR/2, maxLat=userPos.lat+latR/2;
-  const minLng=userPos.lng-lngR/2, maxLng=userPos.lng+lngR/2;
-  const px = (lat,lng) => ({ x:((lng-minLng)/lngR)*W, y:H-((lat-minLat)/latR)*H });
+  const latR = 0.035, lngR = 0.055;
+  const minLat = userPos.lat - latR/2;
+  const minLng = userPos.lng - lngR/2;
+  const px = (lat, lng) => ({
+    x: ((lng - minLng) / lngR) * W,
+    y: H - ((lat - minLat) / latR) * H
+  });
 
   // 場館
   VENUES.forEach(v => {
     const p = px(v.lat, v.lng);
-    const d = userPos ? dist(userPos, {lat:v.lat,lng:v.lng}) : 9999;
+    const d = dist(userPos, { lat: v.lat, lng: v.lng });
     const near = d <= v.r;
-    ctx.beginPath();ctx.arc(p.x,p.y,near?18:14,0,Math.PI*2);
-    ctx.fillStyle = near ? 'rgba(0,200,150,0.18)' : 'rgba(0,0,0,0.05)';
+    ctx.beginPath(); ctx.arc(p.x, p.y, near ? 20 : 15, 0, Math.PI*2);
+    ctx.fillStyle = near ? 'rgba(255,107,53,0.2)' : 'rgba(255,255,255,0.05)';
     ctx.fill();
-    if (near) { ctx.strokeStyle='rgba(0,200,150,0.6)';ctx.lineWidth=1.5;ctx.stroke(); }
-    ctx.font='14px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    if (near) { ctx.strokeStyle = 'rgba(255,107,53,0.7)'; ctx.lineWidth = 1.5; ctx.stroke(); }
+    ctx.font = '14px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(v.emoji, p.x, p.y);
   });
 
-  // 使用者
+  // 使用者脈衝
   const up = px(userPos.lat, userPos.lng);
-  const t  = Date.now()/1000;
-  const pulse = (Math.sin(t*2)*0.5+0.5);
-  ctx.beginPath();ctx.arc(up.x,up.y,8+pulse*10,0,Math.PI*2);
-  ctx.strokeStyle=`rgba(0,200,150,${0.5-pulse*0.4})`;ctx.lineWidth=2;ctx.stroke();
-  ctx.beginPath();ctx.arc(up.x,up.y,7,0,Math.PI*2);
-  ctx.fillStyle='#00C896';ctx.fill();
-  ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
-  ctx.fillStyle='#006640';ctx.font='bold 10px Noto Sans TC,sans-serif';
-  ctx.textAlign='center';ctx.fillText('你在這',up.x,up.y-17);
+  const pulse = (Math.sin(Date.now() / 500) * 0.5 + 0.5);
+  ctx.beginPath(); ctx.arc(up.x, up.y, 8 + pulse * 12, 0, Math.PI*2);
+  ctx.strokeStyle = `rgba(255,107,53,${0.5 - pulse * 0.4})`; ctx.lineWidth = 2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(up.x, up.y, 7, 0, Math.PI*2);
+  const dotGrad = ctx.createRadialGradient(up.x, up.y, 0, up.x, up.y, 7);
+  dotGrad.addColorStop(0, '#FFD060'); dotGrad.addColorStop(1, '#FF6B35');
+  ctx.fillStyle = dotGrad; ctx.fill();
+  ctx.strokeStyle = '#1C0A00'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.font = 'bold 9px Noto Sans TC,sans-serif';
+  ctx.textAlign = 'center'; ctx.fillText('你在這', up.x, up.y - 16);
 }
 
 // ── Toast
 function showToast(icon, msg) {
   document.getElementById('t-icon').textContent = icon;
-  document.getElementById('t-msg').textContent  = msg;
+  document.getElementById('t-msg').textContent = msg;
   const el = document.getElementById('toast');
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 3000);
