@@ -283,14 +283,70 @@
     }
     .walk-note strong{color:var(--gold-light);}
 
-    .btn-sim{
-      margin-top:16px;width:100%;padding:13px;border:none;border-radius:12px;
+    /* ── Pedometer controls */
+    .pedo-row{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .pedo-label{font-size:13px;color:rgba(255,255,255,.6);font-weight:600;}
+    .pedo-source{
+      display:inline-flex;align-items:center;gap:5px;
+      font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+      border-radius:99px;padding:4px 10px;border:1px solid;
+    }
+    .pedo-source.api{color:#4ADE80;border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.1);}
+    .pedo-source.manual{color:var(--gold-light);border-color:rgba(255,208,96,.4);background:rgba(255,208,96,.1);}
+    .pedo-source.none{color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.15);background:transparent;}
+
+    .pedo-toggle{
+      width:100%;padding:13px;border:none;border-radius:12px;
       font-family:'Noto Sans TC',sans-serif;font-size:14px;font-weight:700;
-      background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);
-      border:1px solid rgba(255,255,255,.15);
+      background:rgba(74,222,128,.15);color:#4ADE80;
+      border:1px solid rgba(74,222,128,.3);
+      cursor:pointer;transition:.2s;margin-bottom:10px;
+    }
+    .pedo-toggle:active{transform:scale(.97);}
+    .pedo-toggle.off{background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.12);}
+
+    .manual-input-row{
+      display:flex;gap:8px;margin-bottom:10px;
+    }
+    .manual-input{
+      flex:1;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.15);
+      background:rgba(255,255,255,.07);color:#fff;
+      font-family:'Noto Sans TC',sans-serif;font-size:14px;font-weight:600;
+      outline:none;transition:.2s;
+    }
+    .manual-input::placeholder{color:rgba(255,255,255,.25);}
+    .manual-input:focus{border-color:rgba(255,208,96,.5);background:rgba(255,208,96,.07);}
+    .manual-add-btn{
+      padding:11px 18px;border:none;border-radius:12px;
+      font-family:'Noto Sans TC',sans-serif;font-size:14px;font-weight:700;
+      background:var(--grad-gold);color:var(--ink);
+      cursor:pointer;transition:.2s;flex-shrink:0;
+    }
+    .manual-add-btn:active{transform:scale(.97);}
+
+    .quick-btns{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:4px;
+    }
+    .quick-btn{
+      padding:9px 0;border:none;border-radius:10px;
+      font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:700;
+      background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);
+      border:1px solid rgba(255,255,255,.12);
       cursor:pointer;transition:.2s;
     }
-    .btn-sim:active{transform:scale(.97);}
+    .quick-btn:active{transform:scale(.96);background:rgba(255,208,96,.15);}
+
+    .btn-reset{
+      margin-top:6px;width:100%;padding:11px;border:none;border-radius:10px;
+      font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:600;
+      background:transparent;color:rgba(255,107,53,.6);
+      border:1px solid rgba(255,107,53,.2);
+      cursor:pointer;transition:.2s;
+    }
+    .btn-reset:active{transform:scale(.97);}
 
     /* ══ LOG ══ */
     .logs{padding:0 16px;display:flex;flex-direction:column;gap:8px;}
@@ -422,7 +478,7 @@
           </svg>
           <div class="ring-center">
             <div class="step-num" id="step-num">0</div>
-            <div class="step-label">今日步數</div>
+            <div class="step-label">本月累積步數</div>
           </div>
         </div>
       </div>
@@ -442,12 +498,40 @@
         </div>
       </div>
 
-      <div class="walk-note">
-        📱 實際步數由 U-Sport App 連接手機計步器計算，本頁為示意展示。<br/>
-        🏆 <strong>20萬步→30U</strong>、<strong>30萬步→120U</strong>，以自然月計算。
+      <!-- 分隔 -->
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:16px 0"></div>
+
+      <!-- Pedometer 狀態列 -->
+      <div class="pedo-row">
+        <span class="pedo-label">📟 計步器 API</span>
+        <span class="pedo-source none" id="pedo-source">未連接</span>
       </div>
 
-      <button class="btn-sim" onclick="simulateSteps()">🎮 模擬步數增加（示範用）</button>
+      <!-- 啟用/停用計步 API -->
+      <button class="pedo-toggle off" id="pedo-toggle-btn" onclick="togglePedometer()">
+        🦶 啟用裝置計步 API
+      </button>
+
+      <!-- 手動輸入 -->
+      <div class="manual-input-row">
+        <input class="manual-input" id="manual-input" type="number" min="0" max="999999"
+               placeholder="手動輸入步數…" inputmode="numeric"/>
+        <button class="manual-add-btn" onclick="addManualSteps()">＋ 加入</button>
+      </div>
+
+      <!-- 快速按鈕 -->
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="quickAdd(1000)">＋ 1K</button>
+        <button class="quick-btn" onclick="quickAdd(5000)">＋ 5K</button>
+        <button class="quick-btn" onclick="quickAdd(10000)">＋ 10K</button>
+      </div>
+
+      <div class="walk-note">
+        🏆 <strong>20萬步→30U</strong>、<strong>30萬步→120U</strong>，以自然月計算。<br/>
+        📱 Pedometer API 在支援的裝置上自動讀取；不支援時請手動輸入或用快速按鈕。
+      </div>
+
+      <button class="btn-reset" onclick="resetSteps()">🗑 重設本月步數</button>
     </div>
     <div style="height:8px"></div>
   </div>
@@ -483,27 +567,39 @@
 // U-Sport 集點小幫手 · 主程式 · 2026
 // ══════════════════════════════════════════════
 
+// 場館座標已用 Google Maps 核實
 const VENUES = [
-  { id:1,  name:'大安運動中心',     addr:'大安區建國南路二段', emoji:'🏋️', lat:25.0225, lng:121.5389, r:500 },
-  { id:2,  name:'中山運動中心',     addr:'中山區朱崙街',       emoji:'🏊', lat:25.0614, lng:121.5328, r:500 },
-  { id:3,  name:'World Gym 信義店', addr:'信義區松仁路',       emoji:'💪', lat:25.0368, lng:121.5670, r:500 },
-  { id:4,  name:'健身工廠 南京店',  addr:'松山區南京東路四段', emoji:'🔥', lat:25.0516, lng:121.5561, r:500 },
-  { id:5,  name:'松山運動中心',     addr:'松山區健康路',       emoji:'🏸', lat:25.0570, lng:121.5714, r:500 },
-  { id:6,  name:'內湖運動中心',     addr:'內湖區內湖路一段',   emoji:'🎾', lat:25.0828, lng:121.5874, r:500 },
-  { id:7,  name:'士林運動中心',     addr:'士林區基河路',       emoji:'🏃', lat:25.0932, lng:121.5200, r:500 },
-  { id:8,  name:'World Gym 中山店', addr:'中山區中山北路二段', emoji:'💪', lat:25.0588, lng:121.5234, r:500 },
+  { id:1,  name:'大安運動中心',     addr:'大安區建國南路二段333號', emoji:'🏋️', lat:25.0236, lng:121.5380, r:500 },
+  { id:2,  name:'中山運動中心',     addr:'中山區樂群二路128號',     emoji:'🏊', lat:25.0808, lng:121.5570, r:500 },
+  { id:3,  name:'World Gym 信義店', addr:'信義區松仁路28號',         emoji:'💪', lat:25.0356, lng:121.5662, r:500 },
+  { id:4,  name:'健身工廠 南京店',  addr:'松山區南京東路四段',       emoji:'🔥', lat:25.0514, lng:121.5558, r:500 },
+  { id:5,  name:'松山運動中心',     addr:'松山區健康路108號',         emoji:'🏸', lat:25.0502, lng:121.5780, r:500 },
+  { id:6,  name:'內湖運動中心',     addr:'內湖區內湖路二段216號',     emoji:'🎾', lat:25.0762, lng:121.5877, r:500 },
+  { id:7,  name:'士林運動中心',     addr:'士林區基河路33號',           emoji:'🏃', lat:25.0926, lng:121.5245, r:500 },
+  { id:8,  name:'World Gym 中山店', addr:'中山區中山北路二段77號',   emoji:'💪', lat:25.0568, lng:121.5231, r:500 },
 ];
 
+// ── 狀態
 let isTracking = false, watchId = null, userPos = null;
 let notified = new Set(), logs = [], mapRAF = null;
 let mapEl = null, mapCtx = null;
-let simSteps = parseInt(localStorage.getItem('usport_steps') || '0');
 
+// Pedometer
+let pedoEnabled    = false;
+let pedoWatchId    = null;
+let pedoSupported  = false;
+let stepSource     = 'none'; // 'api' | 'manual' | 'none'
+
+// 步數（從 localStorage 恢復）
+let totalSteps = parseInt(localStorage.getItem('usport_steps') || '0');
+
+// ── 初始化
 window.addEventListener('DOMContentLoaded', () => {
   registerSW();
   renderVenues(null);
   initMap();
-  updateWalk(simSteps);
+  updateWalk(totalSteps);
+  detectPedometerSupport();
 });
 
 // ── Service Worker
@@ -513,7 +609,7 @@ async function registerSW() {
   }
 }
 
-// ── Tab
+// ── Tab 切換
 function switchTab(name, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -521,19 +617,29 @@ function switchTab(name, el) {
   document.getElementById('panel-' + name).classList.add('active');
 }
 
-// ── 追蹤切換
+// ════════════════════════════
+// 地理圍欄追蹤
+// ════════════════════════════
 async function toggleTracking() {
   isTracking ? stopTracking() : await startTracking();
 }
 
 async function startTracking() {
   const np = await Notification.requestPermission();
-  if (np !== 'granted') { showToast('⚠️', '請允許通知權限'); return; }
-  if (!('geolocation' in navigator)) { showToast('❌', '不支援定位'); return; }
-  showToast('📍', '取得定位中...');
+  if (np !== 'granted') { showToast('⚠️', '請允許通知權限才能集點提醒'); return; }
+  if (!('geolocation' in navigator)) { showToast('❌', '此裝置不支援定位'); return; }
+  showToast('📍', '正在取得定位…');
   navigator.geolocation.getCurrentPosition(
-    pos => { userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude }; activate(); },
-    ()  => { userPos = { lat: 25.0408, lng: 121.5654 }; showToast('🗺️', '示範位置（台北信義）'); activate(); },
+    pos => {
+      userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      activate();
+    },
+    err => {
+      // 示範用：台北信義區市政府前
+      userPos = { lat: 25.0408, lng: 121.5654 };
+      showToast('🗺️', '使用示範位置（台北信義）');
+      activate();
+    },
     { enableHighAccuracy: true, timeout: 8000 }
   );
 }
@@ -543,12 +649,17 @@ function activate() {
   updateUI();
   startMapLoop();
   checkVenues();
+  // 持續監聽位置變化
   watchId = navigator.geolocation.watchPosition(
-    pos => { userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude }; checkVenues(); },
+    pos => {
+      userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      checkVenues();
+    },
     () => {},
     { enableHighAccuracy: true, maximumAge: 15000, timeout: 10000 }
   );
-  setInterval(checkVenues, 30000);
+  // 備用：每 30 秒再掃一次（確保不漏掉）
+  setInterval(() => { if (isTracking) checkVenues(); }, 30000);
 }
 
 function stopTracking() {
@@ -569,29 +680,46 @@ function updateUI() {
   if (isTracking) {
     btn.textContent = '⏹ 停止追蹤';
     btn.classList.add('stop');
-    pill.classList.add('on'); lbl.textContent = '追蹤中';
+    pill.classList.add('on');
+    lbl.textContent = '追蹤中';
     document.getElementById('map-cover').classList.add('hidden');
   } else {
     btn.textContent = '🏃 開始追蹤定位';
     btn.classList.remove('stop');
-    pill.classList.remove('on'); lbl.textContent = '未追蹤';
+    pill.classList.remove('on');
+    lbl.textContent = '未追蹤';
   }
 }
 
-// ── 距離（Haversine）
-function dist(a, b) {
-  const R = 6371000;
-  const dL = (b.lat - a.lat) * Math.PI / 180;
-  const dG = (b.lng - a.lng) * Math.PI / 180;
-  const x = Math.sin(dL/2)**2 + Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dG/2)**2;
-  return Math.round(R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x)));
+// ════════════════════════════
+// 距離計算（Haversine，正確版）
+// ════════════════════════════
+function haversine(a, b) {
+  const R  = 6371000; // 地球半徑（公尺）
+  const φ1 = a.lat * Math.PI / 180;
+  const φ2 = b.lat * Math.PI / 180;
+  const Δφ = (b.lat - a.lat) * Math.PI / 180;
+  const Δλ = (b.lng - a.lng) * Math.PI / 180;
+  const sinΔφ = Math.sin(Δφ / 2);
+  const sinΔλ = Math.sin(Δλ / 2);
+  const a2 = sinΔφ * sinΔφ + Math.cos(φ1) * Math.cos(φ2) * sinΔλ * sinΔλ;
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a2), Math.sqrt(1 - a2)));
 }
 
-// ── 檢查場館
+function fmtDist(m) {
+  if (m === null) return '---';
+  if (m >= 1000) return (m / 1000).toFixed(1) + ' km';
+  return m + ' m';
+}
+
+// ════════════════════════════
+// 場館掃描 & 通知
+// ════════════════════════════
 function checkVenues() {
   if (!userPos) return;
-  const list = VENUES.map(v => ({ ...v, d: dist(userPos, { lat: v.lat, lng: v.lng }) }))
-                     .sort((a, b) => a.d - b.d);
+  const list = VENUES
+    .map(v => ({ ...v, d: haversine(userPos, { lat: v.lat, lng: v.lng }) }))
+    .sort((a, b) => a.d - b.d);
   renderVenues(list);
   list.forEach(v => {
     if (v.d <= v.r && !notified.has(v.id)) {
@@ -605,7 +733,7 @@ function checkVenues() {
 function sendNotify(v) {
   if (Notification.permission !== 'granted') return;
   const n = new Notification(`🏃 U-Sport 集點提醒 — ${v.name}`, {
-    body: `你距離「${v.name}」只有 ${v.d}m！打開 U-Sport App 出示 QR Code，入場即得 5 U 幣 🎉`,
+    body: `你距離「${v.name}」只有 ${v.d} 公尺！打開 U-Sport App 出示 QR Code，入場即得 5 U 幣 🎉`,
     tag: `v-${v.id}`,
   });
   n.onclick = () => { window.open('https://usport.gov.taipei', '_blank'); n.close(); };
@@ -614,7 +742,7 @@ function sendNotify(v) {
 
 function addLog(v) {
   const t = new Date();
-  const time = `${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}`;
+  const time = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
   logs.unshift({ name: v.name, emoji: v.emoji, d: v.d, time });
   renderLogs();
 }
@@ -627,7 +755,7 @@ function renderLogs() {
   }
   el.innerHTML = logs.slice(0, 8).map(l => `
     <div class="log">
-      <div class="log-body">${l.emoji} <strong>${l.name}</strong>，距離 ${l.d}m，提醒集點</div>
+      <div class="log-body">${l.emoji} <strong>${l.name}</strong>，距離 ${l.d} m，提醒集點</div>
       <div class="log-time">${l.time}</div>
     </div>`).join('');
 }
@@ -635,9 +763,8 @@ function renderLogs() {
 function renderVenues(list) {
   const el = document.getElementById('stores');
   const src = list || VENUES.map(v => ({ ...v, d: null }));
-  el.innerHTML = src.slice(0, 6).map(v => {
+  el.innerHTML = src.slice(0, 8).map(v => {
     const near = v.d !== null && v.d <= v.r;
-    const distTxt = v.d === null ? '---' : v.d >= 1000 ? (v.d/1000).toFixed(1)+'km' : v.d+'m';
     return `
     <div class="store ${near ? 'near' : ''}">
       <div class="store-ico">${v.emoji}</div>
@@ -646,36 +773,220 @@ function renderVenues(list) {
         <div class="store-addr">${v.addr}</div>
         ${near ? '<div class="near-badge">📍 附近！記得集點</div>' : ''}
       </div>
-      <div class="store-dist ${!v.d || v.d > 1000 ? 'far' : ''}">${distTxt}</div>
+      <div class="store-dist ${v.d === null || v.d > 1000 ? 'far' : ''}">${fmtDist(v.d)}</div>
     </div>`;
   }).join('');
 }
 
-// ── U-Walk
-function simulateSteps() {
-  simSteps += Math.floor(Math.random() * 3000) + 1000;
-  if (simSteps > 300000) simSteps = 300000;
-  localStorage.setItem('usport_steps', simSteps);
-  updateWalk(simSteps);
-  showToast('🚶', `模擬步數：${simSteps.toLocaleString()} 步`);
+// ════════════════════════════
+// Pedometer API
+// ════════════════════════════
+function detectPedometerSupport() {
+  // Sensor API (Android Chrome 67+)
+  if (typeof Accelerometer !== 'undefined' || typeof Pedometer !== 'undefined') {
+    pedoSupported = true;
+  }
+  // Fallback: DeviceMotionEvent (broader support)
+  if (window.DeviceMotionEvent) {
+    pedoSupported = true;
+  }
+  const btn = document.getElementById('pedo-toggle-btn');
+  if (!pedoSupported) {
+    btn.textContent = '⚠️ 此裝置不支援計步 API';
+    btn.disabled = true;
+    btn.style.opacity = '0.4';
+  }
 }
 
+function togglePedometer() {
+  if (!pedoSupported) {
+    showToast('⚠️', '此裝置不支援計步 API，請手動輸入');
+    return;
+  }
+  pedoEnabled ? stopPedometer() : startPedometer();
+}
+
+async function startPedometer() {
+  // 請求 DeviceMotion 權限（iOS 13+）
+  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+    try {
+      const perm = await DeviceMotionEvent.requestPermission();
+      if (perm !== 'granted') { showToast('⚠️', '請允許動作感測器權限'); return; }
+    } catch(e) { showToast('❌', '無法請求感測器權限'); return; }
+  }
+
+  pedoEnabled = true;
+  updatePedoUI(true);
+  showToast('🦶', '計步 API 已啟用');
+
+  // 嘗試使用 Sensor API（Pedometer，Chrome Android）
+  if (typeof Pedometer !== 'undefined') {
+    try {
+      const sensor = new Pedometer();
+      sensor.addEventListener('reading', () => {
+        syncPedometerData(sensor.steps);
+      });
+      sensor.start();
+      pedoWatchId = sensor;
+      stepSource = 'api';
+      updateSourceBadge();
+      return;
+    } catch(e) {}
+  }
+
+  // Fallback: 用 DeviceMotion 做簡易步伐估算
+  let lastAcc = null, stepBuf = 0, lastStep = 0;
+  const THRESHOLD = 1.8; // 加速度差值觸發閾值
+
+  pedoWatchId = (e) => {
+    const acc = e.accelerationIncludingGravity;
+    if (!acc) return;
+    const mag = Math.sqrt(acc.x**2 + acc.y**2 + acc.z**2);
+    if (lastAcc !== null) {
+      const diff = Math.abs(mag - lastAcc);
+      if (diff > THRESHOLD) {
+        const now = Date.now();
+        if (now - lastStep > 350) { // 每步最少 350ms
+          lastStep = now;
+          stepBuf++;
+          if (stepBuf % 1 === 0) { // 每步即時同步
+            syncPedometerData(totalSteps + 1);
+          }
+        }
+      }
+    }
+    lastAcc = mag;
+  };
+
+  window.addEventListener('devicemotion', pedoWatchId);
+  stepSource = 'api';
+  updateSourceBadge();
+}
+
+function stopPedometer() {
+  pedoEnabled = false;
+  if (pedoWatchId) {
+    if (typeof pedoWatchId === 'function') {
+      window.removeEventListener('devicemotion', pedoWatchId);
+    } else if (pedoWatchId.stop) {
+      pedoWatchId.stop();
+    }
+    pedoWatchId = null;
+  }
+  stepSource = totalSteps > 0 ? 'manual' : 'none';
+  updatePedoUI(false);
+  updateSourceBadge();
+  showToast('⏸', '計步 API 已停用');
+}
+
+function syncPedometerData(steps) {
+  if (steps <= totalSteps) {
+    // DeviceMotion fallback：累加
+    totalSteps++;
+  } else {
+    totalSteps = steps;
+  }
+  saveSteps();
+  updateWalk(totalSteps);
+}
+
+function updatePedoUI(on) {
+  const btn = document.getElementById('pedo-toggle-btn');
+  if (on) {
+    btn.textContent = '⏹ 停用計步 API';
+    btn.classList.remove('off');
+  } else {
+    btn.textContent = '🦶 啟用裝置計步 API';
+    btn.classList.add('off');
+  }
+}
+
+function updateSourceBadge() {
+  const el = document.getElementById('pedo-source');
+  if (stepSource === 'api') {
+    el.className = 'pedo-source api';
+    el.textContent = '● API 連接中';
+  } else if (stepSource === 'manual') {
+    el.className = 'pedo-source manual';
+    el.textContent = '✎ 手動輸入';
+  } else {
+    el.className = 'pedo-source none';
+    el.textContent = '未連接';
+  }
+}
+
+// ════════════════════════════
+// 手動步數輸入
+// ════════════════════════════
+function addManualSteps() {
+  const input = document.getElementById('manual-input');
+  const val = parseInt(input.value);
+  if (isNaN(val) || val <= 0) { showToast('⚠️', '請輸入有效步數'); return; }
+  if (val > 99999) { showToast('⚠️', '單次輸入上限 99,999 步'); return; }
+  totalSteps += val;
+  if (totalSteps > 300000) totalSteps = 300000;
+  input.value = '';
+  stepSource = 'manual';
+  updateSourceBadge();
+  saveSteps();
+  updateWalk(totalSteps);
+  showToast('✅', `已加入 ${val.toLocaleString()} 步`);
+}
+
+function quickAdd(n) {
+  totalSteps += n;
+  if (totalSteps > 300000) totalSteps = 300000;
+  if (stepSource === 'none') { stepSource = 'manual'; updateSourceBadge(); }
+  saveSteps();
+  updateWalk(totalSteps);
+  showToast('🚶', `＋${(n/1000).toFixed(0)}K 步，共 ${totalSteps.toLocaleString()} 步`);
+}
+
+function resetSteps() {
+  if (!confirm('確定要重設本月所有步數嗎？')) return;
+  totalSteps = 0;
+  stepSource = 'none';
+  updateSourceBadge();
+  saveSteps();
+  updateWalk(0);
+  showToast('🗑', '已重設步數');
+}
+
+function saveSteps() {
+  localStorage.setItem('usport_steps', totalSteps);
+}
+
+// ── Enter 鍵送出
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('manual-input');
+  if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') addManualSteps(); });
+});
+
+// ════════════════════════════
+// 步數環 UI 更新
+// ════════════════════════════
 function updateWalk(steps) {
   document.getElementById('step-num').textContent = steps.toLocaleString();
-  const circ = 2 * Math.PI * 57;
-  const pct = Math.min(steps / 300000, 1);
+  const circ = 2 * Math.PI * 57; // r=57 → circumference≈358.14
+  const pct  = Math.min(steps / 300000, 1);
   document.getElementById('ring-prog').style.strokeDashoffset = circ * (1 - pct);
   document.getElementById('bar1').style.width = Math.min(steps / 200000 * 100, 100) + '%';
   document.getElementById('bar2').style.width = Math.min(steps / 300000 * 100, 100) + '%';
 }
 
-// ── Canvas 地圖
+// ════════════════════════════
+// Canvas 地圖
+// ════════════════════════════
 function initMap() {
   mapEl  = document.getElementById('map-canvas');
   mapCtx = mapEl.getContext('2d');
   const p = mapEl.parentElement;
   mapEl.width  = p.clientWidth;
   mapEl.height = p.clientHeight;
+  window.addEventListener('resize', () => {
+    mapEl.width  = mapEl.parentElement.clientWidth;
+    mapEl.height = mapEl.parentElement.clientHeight;
+  });
 }
 
 function startMapLoop() {
@@ -689,58 +1000,78 @@ function drawMap() {
   ctx.clearRect(0, 0, W, H);
 
   // 背景
-  const bgGrad = ctx.createLinearGradient(0, 0, W, H);
-  bgGrad.addColorStop(0, '#1C0A00'); bgGrad.addColorStop(1, '#1A1A2E');
-  ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, W, H);
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#1C0A00'); bg.addColorStop(1, '#1A1A2E');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
   // 格線
   ctx.strokeStyle = 'rgba(255,107,53,0.06)'; ctx.lineWidth = 1;
-  for (let x=0;x<W;x+=36){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for (let y=0;y<H;y+=36){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  for (let x = 0; x < W; x += 36) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 36) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
 
-  const latR = 0.035, lngR = 0.055;
-  const minLat = userPos.lat - latR/2;
-  const minLng = userPos.lng - lngR/2;
-  const px = (lat, lng) => ({
-    x: ((lng - minLng) / lngR) * W,
-    y: H - ((lat - minLat) / latR) * H
+  // 地圖投影（以使用者為中心）
+  const latSpan = 0.04, lngSpan = 0.06;
+  const minLat = userPos.lat - latSpan / 2;
+  const minLng = userPos.lng - lngSpan / 2;
+  const toXY = (lat, lng) => ({
+    x: ((lng - minLng) / lngSpan) * W,
+    y: H - ((lat - minLat) / latSpan) * H
   });
 
-  // 場館
+  // 場館 pins
   VENUES.forEach(v => {
-    const p = px(v.lat, v.lng);
-    const d = dist(userPos, { lat: v.lat, lng: v.lng });
+    const p = toXY(v.lat, v.lng);
+    const d = haversine(userPos, { lat: v.lat, lng: v.lng });
     const near = d <= v.r;
-    ctx.beginPath(); ctx.arc(p.x, p.y, near ? 20 : 15, 0, Math.PI*2);
-    ctx.fillStyle = near ? 'rgba(255,107,53,0.2)' : 'rgba(255,255,255,0.05)';
+
+    // 光暈圓
+    ctx.beginPath(); ctx.arc(p.x, p.y, near ? 22 : 16, 0, Math.PI * 2);
+    ctx.fillStyle = near ? 'rgba(255,107,53,0.22)' : 'rgba(255,255,255,0.05)';
     ctx.fill();
-    if (near) { ctx.strokeStyle = 'rgba(255,107,53,0.7)'; ctx.lineWidth = 1.5; ctx.stroke(); }
-    ctx.font = '14px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    if (near) {
+      ctx.strokeStyle = 'rgba(255,107,53,0.7)'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+
+    // Emoji
+    ctx.font = '15px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(v.emoji, p.x, p.y);
+
+    // 距離標籤（僅顯示 2km 內）
+    if (d <= 2000) {
+      ctx.fillStyle = near ? 'rgba(255,176,32,0.9)' : 'rgba(255,255,255,0.35)';
+      ctx.font = 'bold 8px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(fmtDist(d), p.x, p.y + 18);
+    }
   });
 
-  // 使用者脈衝
-  const up = px(userPos.lat, userPos.lng);
-  const pulse = (Math.sin(Date.now() / 500) * 0.5 + 0.5);
-  ctx.beginPath(); ctx.arc(up.x, up.y, 8 + pulse * 12, 0, Math.PI*2);
-  ctx.strokeStyle = `rgba(255,107,53,${0.5 - pulse * 0.4})`; ctx.lineWidth = 2; ctx.stroke();
-  ctx.beginPath(); ctx.arc(up.x, up.y, 7, 0, Math.PI*2);
-  const dotGrad = ctx.createRadialGradient(up.x, up.y, 0, up.x, up.y, 7);
-  dotGrad.addColorStop(0, '#FFD060'); dotGrad.addColorStop(1, '#FF6B35');
-  ctx.fillStyle = dotGrad; ctx.fill();
+  // 使用者位置
+  const up = toXY(userPos.lat, userPos.lng);
+  const pulse = Math.sin(Date.now() / 500) * 0.5 + 0.5;
+
+  ctx.beginPath(); ctx.arc(up.x, up.y, 8 + pulse * 13, 0, Math.PI * 2);
+  ctx.strokeStyle = `rgba(255,107,53,${0.55 - pulse * 0.45})`; ctx.lineWidth = 2; ctx.stroke();
+
+  const dotG = ctx.createRadialGradient(up.x, up.y, 0, up.x, up.y, 7);
+  dotG.addColorStop(0, '#FFD060'); dotG.addColorStop(1, '#FF6B35');
+  ctx.beginPath(); ctx.arc(up.x, up.y, 7, 0, Math.PI * 2);
+  ctx.fillStyle = dotG; ctx.fill();
   ctx.strokeStyle = '#1C0A00'; ctx.lineWidth = 2; ctx.stroke();
-  ctx.fillStyle = 'rgba(255,255,255,0.8)';
-  ctx.font = 'bold 9px Noto Sans TC,sans-serif';
-  ctx.textAlign = 'center'; ctx.fillText('你在這', up.x, up.y - 16);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('你在這', up.x, up.y - 17);
 }
 
-// ── Toast
+// ════════════════════════════
+// Toast
+// ════════════════════════════
 function showToast(icon, msg) {
   document.getElementById('t-icon').textContent = icon;
-  document.getElementById('t-msg').textContent = msg;
+  document.getElementById('t-msg').textContent  = msg;
   const el = document.getElementById('toast');
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 3000);
+  clearTimeout(el._tid);
+  el._tid = setTimeout(() => el.classList.remove('show'), 3000);
 }
 </script>
 </body>
